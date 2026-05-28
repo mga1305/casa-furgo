@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Casa & Furgo">
+  <title>Casa & Furgo</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+  <!-- PANTALLA: Login -->
+  <div id="screen-login" class="screen active">
+    <div class="login-wrap">
+      <div class="login-logo">
+        <i class="ti ti-home"></i>
+        <span>Casa & Furgo</span>
+      </div>
+      <div class="login-card">
+        <h2>Entrar</h2>
+        <input type="email" id="login-email" placeholder="Correo electrónico">
+        <input type="password" id="login-password" placeholder="Contraseña">
+        <button id="btn-login">Entrar</button>
+        <div id="login-error" class="error-msg"></div>
+        <div class="login-sep">¿No tienes cuenta?</div>
+        <button id="btn-register" class="btn-secondary">Crear cuenta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: Registro -->
+  <div id="screen-register" class="screen">
+    <div class="login-wrap">
+      <div class="login-logo">
+        <i class="ti ti-home"></i>
+        <span>Casa & Furgo</span>
+      </div>
+      <div class="login-card">
+        <h2>Crear cuenta</h2>
+        <input type="text" id="reg-name" placeholder="Tu nombre (ej: Marc)">
+        <input type="email" id="reg-email" placeholder="Correo electrónico">
+        <input type="password" id="reg-password" placeholder="Contraseña">
+        <button id="btn-do-register">Crear cuenta</button>
+        <div id="reg-error" class="error-msg"></div>
+        <button id="btn-back-login" class="btn-secondary">Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: App principal -->
+  <div id="screen-app" class="screen">
+
+    <div class="header" id="main-header">
+      <div class="header-top">
+        <div class="header-title" id="header-title">
+          <i class="ti ti-home"></i>
+          <span id="header-title-text">Buenas</span>
+        </div>
+        <div id="header-back" class="back-btn" style="display:none" onclick="goHome()">
+          <i class="ti ti-arrow-left"></i> Inicio
+        </div>
+        <button id="btn-logout" class="btn-icon" onclick="logout()">
+          <i class="ti ti-logout"></i>
+        </button>
+      </div>
+      <div id="casa-switcher" class="section-pill" style="display:none">
+        <div class="spill active" id="spill-orden" onclick="switchCasa('orden')">
+          <i class="ti ti-layout-kanban"></i> Orden
+        </div>
+        <div class="spill" id="spill-eco" onclick="switchCasa('eco')">
+          <i class="ti ti-coin"></i> Económico
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista: Inicio -->
+    <div id="view-home" class="view active">
+      <div class="home-cards">
+        <div class="home-card" onclick="enterSection('casa')">
+          <div class="home-card-icon" style="background:#EEEDFE">
+            <i class="ti ti-home" style="color:#534AB7"></i>
+          </div>
+          <div class="home-card-text">
+            <div class="home-card-name">Casa</div>
+            <div class="home-card-desc">Orden del hogar y gestión económica</div>
+            <div class="home-card-pills" id="home-pills-casa">
+              <span class="pill purple">Cargando...</span>
+            </div>
+          </div>
+          <i class="ti ti-chevron-right home-card-arrow"></i>
+        </div>
+        <div class="home-card" onclick="enterSection('furgo')">
+          <div class="home-card-icon" style="background:#FAEEDA">
+            <i class="ti ti-car" style="color:#854F0B"></i>
+          </div>
+          <div class="home-card-text">
+            <div class="home-card-name">Furgo</div>
+            <div class="home-card-desc">Gestión, mantenimiento y básculas</div>
+            <div class="home-card-pills">
+              <span class="pill amber">Próximamente</span>
+            </div>
+          </div>
+          <i class="ti ti-chevron-right home-card-arrow"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista: Orden -->
+    <div id="view-orden" class="view">
+      <div id="orden-content">
+        <p class="loading-text">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- Vista: Económico -->
+    <div id="view-eco" class="view">
+      <div id="eco-content">
+        <p class="loading-text">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- Vista: Furgo -->
+    <div id="view-furgo" class="view">
+      <div class="coming-soon">
+        <i class="ti ti-car"></i>
+        <p>Sección Furgo</p>
+        <span>Próximamente</span>
+      </div>
+    </div>
+
+    <!-- Nav inferior -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <div class="nav-item active" id="nav-home" onclick="goHome()">
+        <i class="ti ti-layout-grid"></i>
+        <span>Inicio</span>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- Firebase -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
