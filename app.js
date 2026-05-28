@@ -1,4 +1,5 @@
 import { onAuthChange, getUserData, login, register, logout as firebaseLogout } from "./auth.js";
+import { initOrden, destroyOrden, renderTabContent } from "./orden.js";
 
 let currentUser = null;
 let currentUserData = null;
@@ -34,6 +35,7 @@ window.showView = function(id) {
 }
 
 window.goHome = function() {
+  destroyOrden();
   document.getElementById("header-back").style.display = "none";
   document.getElementById("btn-logout").style.display = "flex";
   document.getElementById("casa-switcher").style.display = "none";
@@ -66,13 +68,13 @@ window.switchCasa = function(tab) {
     document.getElementById("header-title").querySelector("i").className = "ti ti-home";
     setBottomNav("orden");
     showView("orden");
-    loadOrden();
+    initOrden(currentUserData);
   } else {
     document.getElementById("header-title-text").textContent = "Económico";
     document.getElementById("header-title").querySelector("i").className = "ti ti-coin";
     setBottomNav("eco");
     showView("eco");
-    loadEco();
+    document.getElementById("eco-content").innerHTML = `<p class="loading-text">Módulo económico — próximamente</p>`;
   }
 }
 
@@ -81,36 +83,35 @@ function setBottomNav(section) {
   const navs = {
     home: `<div class="nav-item active" onclick="goHome()"><i class="ti ti-layout-grid"></i><span>Inicio</span></div>`,
     orden: `
-      <div class="nav-item active" id="nav-tablero" onclick="ordenTab('tablero')"><i class="ti ti-layout-kanban"></i><span>Tablero</span></div>
-      <div class="nav-item" id="nav-planif" onclick="ordenTab('planif')"><i class="ti ti-refresh"></i><span>Planificación</span></div>
-      <div class="nav-item" id="nav-stats" onclick="ordenTab('stats')"><i class="ti ti-chart-bar"></i><span>Stats</span></div>
-      <div class="nav-item" id="nav-cfg-orden" onclick="ordenTab('config')"><i class="ti ti-settings"></i><span>Config</span></div>`,
+      <div class="nav-item active" id="nav-tablero" onclick="ordenNav('tablero')"><i class="ti ti-layout-kanban"></i><span>Tablero</span></div>
+      <div class="nav-item" id="nav-planif" onclick="ordenNav('planif')"><i class="ti ti-refresh"></i><span>Planificación</span></div>
+      <div class="nav-item" id="nav-stats" onclick="ordenNav('stats')"><i class="ti ti-chart-bar"></i><span>Stats</span></div>
+      <div class="nav-item" id="nav-cfg-orden" onclick="ordenNav('config')"><i class="ti ti-settings"></i><span>Config</span></div>`,
     eco: `
-      <div class="nav-item active" id="nav-resumen" onclick="ecoTab('resumen')"><i class="ti ti-home"></i><span>Resumen</span></div>
-      <div class="nav-item" id="nav-gastos" onclick="ecoTab('gastos')"><i class="ti ti-receipt"></i><span>Gastos</span></div>
-      <div class="nav-item" id="nav-balance" onclick="ecoTab('balance')"><i class="ti ti-arrows-exchange"></i><span>Balance</span></div>
-      <div class="nav-item" id="nav-cfg-eco" onclick="ecoTab('config')"><i class="ti ti-settings"></i><span>Config</span></div>`,
+      <div class="nav-item active" id="nav-resumen"><i class="ti ti-home"></i><span>Resumen</span></div>
+      <div class="nav-item" id="nav-gastos"><i class="ti ti-receipt"></i><span>Gastos</span></div>
+      <div class="nav-item" id="nav-balance"><i class="ti ti-arrows-exchange"></i><span>Balance</span></div>
+      <div class="nav-item" id="nav-cfg-eco"><i class="ti ti-settings"></i><span>Config</span></div>`,
     furgo: `<div class="nav-item active" onclick="goHome()"><i class="ti ti-arrow-left"></i><span>Inicio</span></div>`
   };
   nav.innerHTML = navs[section] || navs.home;
+}
+
+window.ordenNav = function(tab) {
+  document.querySelectorAll("#bottom-nav .nav-item").forEach(n => n.classList.remove("active"));
+  const id = tab === "config" ? "nav-cfg-orden" : "nav-" + tab;
+  document.getElementById(id)?.classList.add("active");
+  ordenSetTab(tab, currentUserData);
 }
 
 window.logout = async function() {
   await firebaseLogout();
 }
 
-function loadOrden() {
-  document.getElementById("orden-content").innerHTML = `<p class="loading-text">Cargando Orden...</p>`;
-}
-
-function loadEco() {
-  document.getElementById("eco-content").innerHTML = `<p class="loading-text">Cargando Económico...</p>`;
-}
-
 function updateHomePills() {
   document.getElementById("home-pills-casa").innerHTML = `
     <span class="pill purple">Sprint activo</span>
-    <span class="pill teal">Listo</span>`;
+    <span class="pill teal">Sincronizado</span>`;
 }
 
 document.getElementById("btn-login").addEventListener("click", async () => {
@@ -146,16 +147,6 @@ document.getElementById("btn-do-register").addEventListener("click", async () =>
   try {
     await register(name, email, password);
   } catch (e) {
-    errEl.textContent = "Error al crear la cuenta: " + e.message;
+    errEl.textContent = "Error: " + e.message;
   }
 });
-
-window.ordenTab = function(tab) {
-  document.querySelectorAll("#bottom-nav .nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById("nav-" + (tab === "config" ? "cfg-orden" : tab))?.classList.add("active");
-}
-
-window.ecoTab = function(tab) {
-  document.querySelectorAll("#bottom-nav .nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById("nav-" + (tab === "config" ? "cfg-eco" : tab))?.classList.add("active");
-}
